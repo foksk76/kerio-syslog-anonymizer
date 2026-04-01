@@ -4,6 +4,5 @@ __pycache__/
 .env
 *.txt
 !requirements.txt
-mapping.json
 proxmox_temp_key
 proxmox_temp_key.pub
