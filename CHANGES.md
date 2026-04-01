@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.1 - 2026-04-01
+
+- Allowed `mapping.json` to be tracked in git because it stores hashed real keys instead of plain source values.
+- Added the current hashed `mapping.json` generated from the latest syslog run.
+- Prepared the next release and published it to GitHub.
+
 ## v0.1.0 - 2026-04-01
 
 - Added the initial Kerio raw syslog anonymizer CLI.
