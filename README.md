@@ -22,19 +22,19 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python kerio_anonymizer.py ^
-  --input kerio_raw.txt ^
-  --output kerio_raw_anonymized.txt ^
+python kerio_anonymizer.py \
+  --input kerio_raw.txt \
+  --output kerio_raw_anonymized.txt \
   --mapping mapping.json
 ```
 
 Example with an explicit input encoding:
 
 ```bash
-python kerio_anonymizer.py ^
-  --input kerio_raw.txt ^
-  --output kerio_raw_anonymized.txt ^
-  --mapping mapping.json ^
+python kerio_anonymizer.py \
+  --input kerio_raw.txt \
+  --output kerio_raw_anonymized.txt \
+  --mapping mapping.json \
   --input-encoding cp1251
 ```
 

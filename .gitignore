@@ -6,3 +6,4 @@ __pycache__/
 !requirements.txt
 proxmox_temp_key
 proxmox_temp_key.pub
+.codex
