@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.1 - 2026-04-07
+
+- Remove legacy `CHANGES.md` from the repository.
+- Remove draft `RELEASE_NOTES.md` from the repository.
+- Remove references to those files from `README.md` and `README.ru.md`.
+
 ## v0.2.0 - 2026-04-07
 
 - Align `README.md` with the `C:\Git\README_TEMPLATE*` project-family template.

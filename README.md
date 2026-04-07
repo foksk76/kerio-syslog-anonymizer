@@ -88,9 +88,7 @@ The related repositories complement each other:
 - `mapping.json` stores deterministic fake values with hashed real keys.
 - `README.md` and `README.ru.md` describe onboarding in English and Russian.
 - `CHANGELOG.md`, `HANDOFF.md`, and `NEXT_STEPS.md` describe project state and next steps.
-- `RELEASE_NOTES.md` contains the current GitHub Release Notes draft.
 - `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, and `LICENSE` describe governance.
-- `CHANGES.md` is retained as legacy release notes; use `CHANGELOG.md` as canonical release history.
 
 ## Documentation language policy
 

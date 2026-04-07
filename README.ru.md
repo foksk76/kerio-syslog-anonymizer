@@ -88,9 +88,7 @@ Kerio Connect -> raw syslog TXT -> kerio-syslog-anonymizer -> anonymized TXT -> 
 - `mapping.json` хранит детерминированные fake values с hashed real keys.
 - `README.md` и `README.ru.md` описывают onboarding на английском и русском.
 - `CHANGELOG.md`, `HANDOFF.md` и `NEXT_STEPS.md` описывают состояние проекта и следующие шаги.
-- `RELEASE_NOTES.md` содержит текущий черновик GitHub Release Notes.
 - `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md` и `LICENSE` описывают governance.
-- `CHANGES.md` сохранён как legacy release notes; canonical release history находится в `CHANGELOG.md`.
 
 ## Языковая политика документации
 
