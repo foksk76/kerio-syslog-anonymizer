@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Align `README.md` with the `C:\Git\README_TEMPLATE*` project-family template.
+- Add `README.ru.md` as the Russian quick-onboarding translation.
+- Update governance documentation to describe the README language policy and GitHub Release Notes expectations.
+- No runtime behavior changed.
+
 ## v0.1.2 - 2026-04-05
 
 - Refactored `README.md` to the unified Kerio project family structure.

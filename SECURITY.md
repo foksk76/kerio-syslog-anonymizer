@@ -4,11 +4,14 @@
 
 This repository is intended primarily for educational, lab, reproducible, and reference implementation use unless explicitly stated otherwise.
 
+The project processes log data that may contain sensitive information. Review inputs, outputs, and mapping files before sharing them.
+
 ## Reporting a vulnerability
 
 Please do **not** open a public issue for sensitive security problems.
 
 Instead, report the issue privately to the maintainer and include:
+
 - repository name;
 - affected file or component;
 - issue description;
@@ -19,6 +22,7 @@ Instead, report the issue privately to the maintainer and include:
 ## What to include
 
 Please provide:
+
 - affected versions or commit range if known;
 - step-by-step reproduction;
 - proof of concept if safe to share;
@@ -31,8 +35,14 @@ Security reports are reviewed on a best-effort basis. No formal SLA is guarantee
 ## Safe sharing rules
 
 Do not publicly share:
+
 - real credentials;
 - private mail content;
 - non-anonymized production logs;
 - vendor-restricted software artifacts;
-- sensitive infrastructure details that are not required to explain the issue.
+- sensitive infrastructure details that are not required to explain the issue;
+- private mapping files unless their publication is intentional and reviewed.
+
+## Third-party software notice
+
+Kerio Connect is proprietary vendor software. This repository does not distribute Kerio Connect or vendor-restricted artifacts.

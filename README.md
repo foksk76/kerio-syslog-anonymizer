@@ -1,104 +1,121 @@
+Language: [English](README.md) | [Русский](README.ru.md)
+
 # Kerio Syslog Anonymizer
 
-Deterministic anonymization of Kerio Connect syslog data for safe sharing, demos, and reproducible ELK work.
+Deterministic anonymization of Kerio Connect syslog text files for safe sharing, public examples, and repeatable parser validation.
+
+> **Project status:** Lab-friendly utility for safely preparing real Kerio syslog samples before public or semi-public use.
+
+> **Language policy:** `README.md` is the main English README. `README.ru.md` is the main Russian translation for lab work and quick onboarding. Keep the language switcher as the first line in both files.
 
 ## Why this repository exists
 
-Real Kerio Connect syslog often contains sensitive data: email addresses, usernames, internal IP addresses, domains, subjects, and personal names. That makes it hard to publish sample logs, share incidents with third parties, or build public dashboards and test datasets.
+Real Kerio Connect syslog can contain sensitive values such as email addresses, usernames, internal IP addresses, domains, subjects, display names, and personal names.
 
-This repository exists to make that workflow safer and repeatable. It anonymizes raw syslog text while keeping replacements deterministic, so the same source value is always replaced with the same fake value across repeated runs. That matters when you want dashboards, parsing rules, correlation logic, and troubleshooting examples to remain consistent after anonymization.
+This repository receives raw syslog text, replaces supported sensitive values with deterministic fake values, and keeps a persistent mapping so repeated runs preserve correlation. That makes it easier to publish examples, reproduce parser behavior, and share troubleshooting datasets without exposing the original data.
 
 ## Project family
 
 This repository is part of the **Kerio Connect Monitoring & Logging** project family:
 
 1. [kerio-connect](https://github.com/foksk76/kerio-connect) - reproducible Kerio Connect lab environment
-2. [kerio-logstash-project](https://github.com/foksk76/kerio-logstash-project) - parsing, normalization, and enrichment pipeline for Kerio syslog
-3. [kerio-syslog-anonymizer](https://github.com/foksk76/kerio-syslog-anonymizer) - deterministic anonymization of real log data for safe public use
+2. [kerio-logstash-project](https://github.com/foksk76/kerio-logstash-project) - parsing, normalization, and validation pipeline for Kerio syslog in ELK
+3. [kerio-syslog-anonymizer](https://github.com/foksk76/kerio-syslog-anonymizer) - deterministic anonymization of real log data for safe public use and repeatable correlation
 
 ## Where this repository fits
 
-This repository sits between log collection and public or semi-public reuse of logs.
+This repository prepares raw Kerio syslog before the data is committed to a public repository, used in parser tests, or shared with another engineer.
 
-Typical flow:
+```text
+Kerio Connect -> raw syslog TXT -> kerio-syslog-anonymizer -> anonymized TXT -> Logstash / Elasticsearch / Kibana / documentation
+```
 
-`Kerio Connect -> raw syslog export -> kerio-syslog-anonymizer -> safe sample dataset -> Logstash / Elasticsearch / Kibana / documentation`
+The related repositories complement each other:
 
-It is especially useful when you want to:
+- `kerio-connect` provides a reproducible Kerio Connect lab.
+- `kerio-logstash-project` parses, normalizes, enriches, and validates Kerio syslog in ELK.
+- `kerio-syslog-anonymizer` prepares real logs for safe public sharing while preserving repeatable correlation.
 
-- publish example logs without exposing original identities;
-- keep stable identifiers for dashboards and parsing tests;
-- share troubleshooting datasets with reduced disclosure risk.
+## Main Usage Flow
 
-## Main use cases
+1. Export or copy a raw Kerio syslog text file.
+2. Run `kerio_anonymizer.py` with an input file, output file, and mapping file.
+3. The script detects or uses the requested input encoding.
+4. Supported sensitive values are replaced with deterministic fake values.
+5. The anonymized output and `mapping.json` are written for later reuse and verification.
 
-- Prepare real-world Kerio syslog for safe publication in Git repositories, blog posts, tickets, or demo labs.
-- Generate deterministic anonymized datasets for parser development and regression checks.
-- Share sample log files with teammates without disclosing original addresses, domains, or personal names.
-- Preserve field-to-field correlation after anonymization for dashboards and investigations.
+## Who This Is For
 
-## Audience
+- Kerio Connect administrators who need to share safe log examples.
+- DevOps, observability, or SecOps engineers who build parser and dashboard fixtures.
+- Project contributors who need realistic anonymized data for repeatable validation.
 
-- beginner DevOps engineers
-- sysadmins and mail administrators
-- homelab users
-- SIEM / observability practitioners
-- developers working on Kerio log parsing and enrichment
+## Architecture / Component Roles
 
-## Architecture / Flow
-
-1. Input: a raw Kerio syslog `.txt` file.
-2. Processing: regex- and field-based anonymization for supported data types.
-3. Persistence: a `mapping.json` file stores `sha256(category:value)` keys mapped to deterministic fake values.
-4. Output: an anonymized `.txt` file plus a reusable mapping file for future runs.
+1. **Source system** produces raw Kerio Connect syslog text.
+2. **Anonymizer script** reads the text file and applies deterministic replacements.
+3. **Mapping store** persists fake values in `mapping.json` using `sha256(category:value)` keys.
+4. **Output artifact** stores anonymized syslog text for tests, documentation, or ELK ingestion.
+5. **Verification commands** confirm that output files exist and mapping keys are hashed.
 
 ## Requirements
 
 ### Software
 
-- Python 3.11 or newer
-- `pip`
-- packages from `requirements.txt`
+- OS: Windows, Linux, or another OS with Python support.
+- Python: 3.11 or newer recommended.
+- Python dependencies: install from `requirements.txt`.
 
 ### Hardware
 
-- CPU: 1 vCPU is enough for small and medium files
-- RAM: 512 MB minimum, 1 GB recommended for larger files
-- Disk: enough free space for the input file, output file, and mapping file
+- CPU: 1 vCPU is enough for small and medium files.
+- RAM: 512 MB minimum, 1 GB recommended for larger files.
+- Disk: enough free space for the input file, output file, and mapping file.
 
 ### Tested versions
 
 | Component | Version | Notes |
 |---|---|---|
-| Python | 3.11.9 | verified in local Windows environment |
-| Python | 3.12.3 | verified in Ubuntu 24.04 test container |
-| Faker | from `requirements.txt` | current anonymization dependency |
+| Python | 3.11.9 | Verified in local Windows environment |
+| Python | 3.12.3 | Verified in Ubuntu 24.04 test container |
+| Faker | From `requirements.txt` | Used for fake data generation |
 
 ## Repository structure
 
-```text
-.
-|-- README.md
-|-- CHANGELOG.md
-|-- HANDOFF.md
-|-- NEXT_STEPS.md
-|-- CONTRIBUTING.md
-|-- SECURITY.md
-|-- SUPPORT.md
-|-- LICENSE
-|-- CHANGES.md
-|-- kerio_anonymizer.py
-|-- requirements.txt
-`-- mapping.json
+- `kerio_anonymizer.py` contains the CLI anonymizer.
+- `requirements.txt` contains Python runtime dependencies.
+- `mapping.json` stores deterministic fake values with hashed real keys.
+- `README.md` and `README.ru.md` describe onboarding in English and Russian.
+- `CHANGELOG.md`, `HANDOFF.md`, and `NEXT_STEPS.md` describe project state and next steps.
+- `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, and `LICENSE` describe governance.
+- `CHANGES.md` is retained as legacy release notes; use `CHANGELOG.md` as canonical release history.
+
+## Documentation language policy
+
+- `README.md` is the main English source.
+- `README.ru.md` is the main Russian translation for lab work and quick onboarding.
+- The first line of both README files is the language switcher:
+
+```md
+Language: [English](README.md) | [Русский](README.ru.md)
 ```
 
-Notes:
-
-- `kerio_anonymizer.py` is the main CLI script.
-- `mapping.json` is the persisted real-to-fake mapping file with hashed real keys.
-- `CHANGES.md` currently exists as working project notes; the canonical public release history is tracked in [CHANGELOG.md](./CHANGELOG.md).
+- The Russian README follows the English README and does not document separate behavior.
+- If the English README changes, update `README.ru.md` in the same release when feasible.
+- `CHANGELOG.md` is maintained in English.
+- `CONTRIBUTING.md` is maintained in English; Russian README changes are welcome when they preserve the meaning of the English version.
 
 ## Quick Start
+
+Short path: create a local Python environment, anonymize one syslog text file, and confirm that the output and mapping files were created.
+
+Work plan:
+
+- prepare a Python virtual environment;
+- install dependencies from `requirements.txt`;
+- run the anonymizer against one input text file;
+- confirm the output file and mapping file;
+- inspect the first anonymized lines.
 
 ### 1. Clone the repository
 
@@ -107,12 +124,14 @@ git clone https://github.com/foksk76/kerio-syslog-anonymizer.git
 cd kerio-syslog-anonymizer
 ```
 
-Expected result:
+If all is well:
 
-- the repository is cloned locally;
-- you are inside the `kerio-syslog-anonymizer` directory.
+- the current directory is the repository root;
+- files such as `kerio_anonymizer.py`, `requirements.txt`, and `README.md` are present.
 
 ### 2. Prepare the environment
+
+PowerShell:
 
 ```powershell
 python -m venv .venv
@@ -122,38 +141,52 @@ python -m pip install -r requirements.txt
 python kerio_anonymizer.py --help
 ```
 
-What you may need to edit:
+Bash:
 
-- no source code changes are required;
-- if your shell blocks activation, run `Set-ExecutionPolicy -Scope Process Bypass`;
-- if your input file is not UTF-8, be ready to set `--input-encoding cp1251` or `--input-encoding cp866` in the run step.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python kerio_anonymizer.py --help
+```
 
-Expected result:
+**What you can edit**
 
-- dependencies install successfully;
-- `python kerio_anonymizer.py --help` prints usage information and exits without error.
+- `--input` value: path to the source syslog text file.
+- `--output` value: path for the anonymized output file.
+- `--mapping` value: path to the mapping JSON file.
+- `--input-encoding` value: use `cp1251` or `cp866` if the source is not UTF-8.
+- `--seed` value: optional deterministic seed for fake generation.
+
+**What matters**
+
+- Reuse the same `mapping.json` when you need stable fake values across runs.
+- Do not publish a mapping file unless you intentionally accept that it contains replacement history.
+- `127.0.0.1` is intentionally preserved and is not anonymized.
 
 ### 3. Run the project
 
-Create `input.txt` in the repository root. You can use the sample from [Example input](#example-input) below or replace it with your own exported Kerio syslog file.
-
-Run the anonymizer:
+Create or copy a raw syslog text file named `input.txt` into the repository root, then run:
 
 ```powershell
 python kerio_anonymizer.py --input input.txt --output output.txt --mapping mapping.json
 ```
 
-If the input file is encoded differently, run for example:
+If the input file uses a non-UTF-8 encoding, run:
 
 ```powershell
 python kerio_anonymizer.py --input input.txt --output output.txt --mapping mapping.json --input-encoding cp1251
 ```
 
-Expected result:
+If all is well:
 
-- the script prints `Done.`;
-- it shows the resolved input, output, and mapping file paths;
-- `output.txt` and `mapping.json` are created or updated.
+- the command finishes with `Done.`;
+- the output path is printed;
+- the mapping path is printed;
+- `output.txt` and `mapping.json` exist after the run.
+
+This quick start does not require a live Kerio Connect server. It can run with a saved text file or the minimal event shown below.
 
 ### 4. Verify the result
 
@@ -163,65 +196,73 @@ Check that the output and mapping files exist:
 python -c "from pathlib import Path; print(Path('output.txt').exists(), Path('mapping.json').exists())"
 ```
 
-Expected result:
+If all is well:
 
 - the command prints `True True`.
 
-Check that mapping keys are hashed and not stored as plain original values:
+Check that mapping keys are hashed:
 
 ```powershell
-python -c "import json; data=json.load(open('mapping.json', encoding='utf-8')); first=next(iter(next(iter(data.values()))), 'empty'); print(first)"
+python -c "import json; data=json.load(open('mapping.json', encoding='utf-8')); category=next(iter(data.values()), {}); first=next(iter(category), 'empty'); print(first)"
 ```
 
-Expected result:
+If all is well:
 
-- the printed key starts with `sha256:` or the output is `empty` if the input had no supported sensitive fields.
+- the printed key starts with `sha256:`;
+- or the command prints `empty` when the input had no supported sensitive fields.
 
-Check that the anonymized file contains replaced values:
+Inspect the first anonymized lines:
 
 ```powershell
 Get-Content output.txt -TotalCount 5
 ```
 
-Expected result:
+If all is well:
 
-- original addresses, usernames, domains, and private IP addresses are replaced with fake deterministic values;
-- `127.0.0.1` remains unchanged if it exists in the input.
+- supported sensitive values are replaced with fake values;
+- `127.0.0.1` remains unchanged if it exists in the source file.
 
-### 5. Example outcome
+### 5. Confirm the outcome
 
-After a successful run you should have:
+After the steps above:
 
-- `output.txt` with anonymized Kerio syslog content;
-- `mapping.json` with hashed real keys mapped to fake values;
-- stable replacements across repeated runs using the same mapping file.
+- `output.txt` contains anonymized syslog text;
+- `mapping.json` contains deterministic fake values keyed by hashed real values;
+- repeated runs with the same mapping keep correlation stable.
 
-## Example input
+## Audit Matrix Run
+
+This repository does not have a separate audit or protocol matrix runner.
+
+Use the verification commands in the Quick Start for this project. Audit and protocol validation belong to the wider Kerio lab and ELK pipeline repositories when they are present.
+
+## Minimal Parser Event
 
 ```text
-<22>1 2026-04-01T14:59:31+07:00 mx01.example.local mail - - - Sent: Queue-ID: 69ccd05a-0001a3e2, Recipient: <john.doe@example.local>, Result: delayed, Status: 4.3.0 Recipient's mailbox busy, Remote-Host: 127.0.0.1, Msg-Id: <alert-123@example.local>
 <22>1 2026-04-01T14:59:32+07:00 mx01.example.local audit - - - IMAP: User john.doe@example.local authenticated from IP address 10.150.90.11
-<22>1 2026-04-01T14:59:33+07:00 mx01.example.local operations - - - {MOVE} User: john.doe@example.local, From: "Ivan Petrov" <john.doe@example.local>, Subject: "Payroll update"
 ```
 
-## Example output
+Save it as `input.txt` to run the Quick Start without a real export file.
+
+## Normalized Result
+
+The exact fake values depend on the mapping file and seed, but the result should keep the event shape while replacing supported sensitive values:
 
 ```text
-<22>1 2026-04-01T14:59:31+07:00 domain-7707198324.example.invalid mail - - - Sent: Queue-ID: 69ccd05a-0001a3e2, Recipient: <bobby_vance@domain-8f60ae24ab.example.invalid>, Result: delayed, Status: 4.3.0 Recipient's mailbox busy, Remote-Host: 127.0.0.1, Msg-Id: <timothy-riley@domain-8f60ae24ab.example.invalid>
 <22>1 2026-04-01T14:59:32+07:00 domain-7707198324.example.invalid audit - - - IMAP: User pamela_roberts@domain-8f60ae24ab.example.invalid authenticated from IP address 10.205.220.170
-<22>1 2026-04-01T14:59:33+07:00 domain-7707198324.example.invalid operations - - - {MOVE} User: pamela_roberts@domain-8f60ae24ab.example.invalid, From: "Martin Borisov" <pamela_roberts@domain-8f60ae24ab.example.invalid>, Subject: "Calendar update"
 ```
 
 ## Verification checklist
 
 - [ ] Repository cloned successfully
-- [ ] Virtual environment created
+- [ ] Environment prepared
 - [ ] Dependencies installed from `requirements.txt`
-- [ ] `python kerio_anonymizer.py --help` works
+- [ ] `python kerio_anonymizer.py --help` completed successfully
 - [ ] `output.txt` was generated
 - [ ] `mapping.json` was generated or updated
-- [ ] `mapping.json` uses `sha256:` keys
-- [ ] repeated runs keep deterministic replacements
+- [ ] Mapping keys start with `sha256:`
+- [ ] Repeated runs keep deterministic replacements
+- [ ] Russian README remains aligned with English README when README behavior changes
 
 ## Troubleshooting
 
@@ -229,13 +270,15 @@ After a successful run you should have:
 
 **Symptoms**
 
-- the script exits immediately with a `Faker` import error.
+- the script exits before processing the input file;
+- the error mentions `Faker`.
 
-**Cause**
+**What to check**
 
-- dependencies were not installed in the active environment.
+- the virtual environment is active;
+- dependencies from `requirements.txt` were installed.
 
-**Solution**
+**How to fix it**
 
 ```powershell
 .venv\Scripts\Activate.ps1
@@ -246,20 +289,20 @@ python -m pip install -r requirements.txt
 
 **Symptoms**
 
-- Cyrillic or other non-ASCII text is garbled in the output;
-- names or subjects are read incorrectly.
+- Cyrillic or other non-ASCII text is garbled;
+- subjects or names are not read as expected.
 
-**Cause**
+**What to check**
 
-- the source file uses a non-UTF-8 encoding.
+- the source file encoding may not be UTF-8.
 
-**Solution**
+**How to fix it**
 
 ```powershell
 python kerio_anonymizer.py --input input.txt --output output.txt --mapping mapping.json --input-encoding cp1251
 ```
 
-If that still looks wrong, try `cp866`.
+If that still looks wrong, try `--input-encoding cp866`.
 
 ### Problem: PowerShell blocks virtual environment activation
 
@@ -267,52 +310,53 @@ If that still looks wrong, try `cp866`.
 
 - `.venv\Scripts\Activate.ps1` is blocked by execution policy.
 
-**Cause**
+**What to check**
 
-- local PowerShell policy prevents script execution.
+- the current PowerShell process execution policy.
 
-**Solution**
+**How to fix it**
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 .venv\Scripts\Activate.ps1
 ```
 
-### Problem: an old mapping file still contains plain-text keys
+### Problem: old mapping file still contains plain-text keys
 
 **Symptoms**
 
-- you see original values in an older `mapping.json`.
+- an older `mapping.json` contains original values instead of `sha256:` keys.
 
-**Cause**
+**What to check**
 
-- the mapping file was created before hashed key normalization was added.
+- the file may have been created before hashed-key normalization was added.
 
-**Solution**
+**How to fix it**
 
 ```powershell
 python kerio_anonymizer.py --input input.txt --output output.txt --mapping mapping.json
 ```
 
-Expected result:
+If all is well:
 
-- on the next save, the script rewrites mapping keys into the `sha256(category:value)` format.
+- the mapping is normalized on save and future keys use the `sha256(category:value)` format.
 
-## Limitations / Non-goals
+## What This Project Does Not Do
 
-- This is a file-based anonymizer, not a streaming syslog service.
-- It currently targets IPv4, not IPv6.
-- It uses heuristics for Kerio log formats and may miss uncommon custom fields.
-- It is not a full PII discovery engine.
-- It does not attempt to preserve every exact linguistic nuance of names or subjects.
-- It is not a replacement for vendor documentation or formal data classification procedures.
+- It does not deploy Kerio Connect.
+- It does not run Logstash, Elasticsearch, Kibana, or Grafana.
+- It does not provide a streaming syslog listener.
+- It does not fully discover all possible PII in arbitrary text.
+- It does not currently target IPv6 anonymization.
+- It does not replace vendor documentation or formal data handling policy.
 
-## Notes
+## What To Know Before Use
 
-- Deterministic anonymization is intentional. It preserves correlation across repeated events, which is important for dashboards, alert tuning, parser tests, and incident walkthroughs.
-- `mapping.json` now stores hashed real keys instead of plain source values, which improves safe sharing, but the file should still be handled carefully because it defines the replacement history for a dataset.
-- `127.0.0.1` is preserved and not anonymized.
-- Source logs may originate from **Kerio Connect**, which is proprietary vendor software. This repository does not distribute Kerio Connect itself.
+- Deterministic anonymization is intentional because dashboards, parser tests, and investigations need stable correlation.
+- `mapping.json` stores hashed real keys, but it still represents replacement history and should be reviewed before publishing.
+- `127.0.0.1` is preserved as-is.
+- Input encoding matters for Cyrillic names and subjects.
+- Kerio Connect is proprietary vendor software. This repository does not distribute Kerio Connect or vendor-restricted artifacts.
 
 ## Roadmap
 
@@ -322,6 +366,8 @@ See [NEXT_STEPS.md](./NEXT_STEPS.md)
 
 See [CHANGELOG.md](./CHANGELOG.md)
 
+Keep `CHANGELOG.md` canonical and English-only unless the repository explicitly decides otherwise.
+
 ## Handoff
 
 See [HANDOFF.md](./HANDOFF.md)
@@ -329,6 +375,37 @@ See [HANDOFF.md](./HANDOFF.md)
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+Contribution guidelines state that:
+
+- English is the main language for project documentation and review;
+- Russian README updates are welcome when they preserve the meaning of the English README;
+- Russian documentation should help onboarding without changing documented behavior.
+
+## GitHub Release Notes
+
+GitHub Release Notes stay in English.
+
+Use this shape for docs-only releases:
+
+```md
+## Operational Changes
+
+- Documentation now follows the Kerio project family README template.
+- Russian README content was aligned with the English README.
+- No runtime behavior changed.
+
+## Validation
+
+- README language switchers were checked in both English and Russian documents.
+- README headings were compared against the project template.
+- `python kerio_anonymizer.py --help` completed successfully.
+
+## Engineer Notes
+
+- No runtime configuration change is required.
+- Use the updated README when onboarding a new engineer or reviewing the anonymization workflow.
+```
 
 ## Security
 

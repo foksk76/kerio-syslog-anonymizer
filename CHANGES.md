@@ -1,17 +1,11 @@
 # Changes
 
-## v0.1.1 - 2026-04-01
+`CHANGELOG.md` is the canonical release history for this repository.
 
-- Allowed `mapping.json` to be tracked in git because it stores hashed real keys instead of plain source values.
-- Added the current hashed `mapping.json` generated from the latest syslog run.
-- Prepared the next release and published it to GitHub.
+This file is retained as a legacy handoff note from the first release wave. New release entries should be added to [CHANGELOG.md](./CHANGELOG.md).
 
-## v0.1.0 - 2026-04-01
+## Legacy notes
 
-- Added the initial Kerio raw syslog anonymizer CLI.
-- Added deterministic anonymization for emails, IPv4 addresses, usernames, subjects, full names, and domains.
-- Added persistent mapping storage with `sha256`-hashed real keys instead of plain source values.
-- Preserved `127.0.0.1` as-is during anonymization.
-- Added input encoding fallbacks and documented usage in English.
-- Added ignore rules for generated text files, local mapping output, and temporary SSH key files.
-- Verified the workflow locally and in a temporary Ubuntu 24.04 test container on Proxmox.
+- `v0.1.1` allowed `mapping.json` to be tracked because it stores hashed real keys instead of plain source values.
+- `v0.1.0` added the initial Kerio raw syslog anonymizer CLI.
+- The first workflow was verified locally and in a temporary Ubuntu 24.04 test container on Proxmox.
