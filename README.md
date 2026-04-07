@@ -84,9 +84,11 @@ The related repositories complement each other:
 
 - `kerio_anonymizer.py` contains the CLI anonymizer.
 - `requirements.txt` contains Python runtime dependencies.
+- `.env.example` documents optional Kerio Connect API settings.
 - `mapping.json` stores deterministic fake values with hashed real keys.
 - `README.md` and `README.ru.md` describe onboarding in English and Russian.
 - `CHANGELOG.md`, `HANDOFF.md`, and `NEXT_STEPS.md` describe project state and next steps.
+- `RELEASE_NOTES.md` contains the current GitHub Release Notes draft.
 - `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, and `LICENSE` describe governance.
 - `CHANGES.md` is retained as legacy release notes; use `CHANGELOG.md` as canonical release history.
 
@@ -187,6 +189,32 @@ If all is well:
 - `output.txt` and `mapping.json` exist after the run.
 
 This quick start does not require a live Kerio Connect server. It can run with a saved text file or the minimal event shown below.
+
+To fetch a source log from Kerio Connect API instead of reading `input.txt`, copy the environment example and edit it:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+Set at least these values in `.env`:
+
+- `KERIO_API_URL`: Kerio Connect Admin API JSON-RPC URL, for example `https://kerio.example.local:4040/admin/api/jsonrpc/`.
+- `KERIO_API_USER`: Kerio account allowed to read or export logs.
+- `KERIO_API_PASSWORD`: password for that account.
+- `KERIO_LOG_NAME`: log to export, for example `mail`.
+
+Then run:
+
+```powershell
+python kerio_anonymizer.py --kerio-fetch-log --output output.txt --mapping mapping.json
+```
+
+If all is well:
+
+- the script logs in to Kerio Connect API;
+- the selected log is exported as plain text;
+- `output.txt` and `mapping.json` are created or updated.
 
 ### 4. Verify the result
 

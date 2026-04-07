@@ -84,9 +84,11 @@ Kerio Connect -> raw syslog TXT -> kerio-syslog-anonymizer -> anonymized TXT -> 
 
 - `kerio_anonymizer.py` содержит CLI anonymizer.
 - `requirements.txt` содержит runtime dependencies Python.
+- `.env.example` описывает optional Kerio Connect API settings.
 - `mapping.json` хранит детерминированные fake values с hashed real keys.
 - `README.md` и `README.ru.md` описывают onboarding на английском и русском.
 - `CHANGELOG.md`, `HANDOFF.md` и `NEXT_STEPS.md` описывают состояние проекта и следующие шаги.
+- `RELEASE_NOTES.md` содержит текущий черновик GitHub Release Notes.
 - `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md` и `LICENSE` описывают governance.
 - `CHANGES.md` сохранён как legacy release notes; canonical release history находится в `CHANGELOG.md`.
 
@@ -167,7 +169,7 @@ python kerio_anonymizer.py --help
 
 ### 3. Запустите проект
 
-Создайте или скопируйте raw syslog text file с именем `input.txt` в корень репозитория, затем выполните:
+Создайте или скопируйте исходный текстовый syslog-файл с именем `input.txt` в корень репозитория, затем выполните:
 
 ```powershell
 python kerio_anonymizer.py --input input.txt --output output.txt --mapping mapping.json
@@ -187,6 +189,32 @@ python kerio_anonymizer.py --input input.txt --output output.txt --mapping mappi
 - после запуска появятся `output.txt` и `mapping.json`.
 
 Для этого quick start не нужен live Kerio Connect server. Можно использовать сохранённый text file или минимальное событие ниже.
+
+Чтобы получить исходный лог через Kerio Connect API вместо чтения `input.txt`, скопируйте пример окружения и отредактируйте его:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+Задайте в `.env` как минимум эти значения:
+
+- `KERIO_API_URL`: адрес Kerio Connect Admin API JSON-RPC, например `https://kerio.example.local:4040/admin/api/jsonrpc/`.
+- `KERIO_API_USER`: учётная запись Kerio, которой разрешено читать или экспортировать логи.
+- `KERIO_API_PASSWORD`: пароль этой учётной записи.
+- `KERIO_LOG_NAME`: лог для экспорта, например `mail`.
+
+Затем выполните:
+
+```powershell
+python kerio_anonymizer.py --kerio-fetch-log --output output.txt --mapping mapping.json
+```
+
+Если всё хорошо:
+
+- скрипт войдёт в Kerio Connect API;
+- выбранный лог будет экспортирован как plain text;
+- `output.txt` и `mapping.json` будут созданы или обновлены.
 
 ### 4. Проверьте результат
 

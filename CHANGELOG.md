@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 - 2026-04-07
 
 - Align `README.md` with the `C:\Git\README_TEMPLATE*` project-family template.
 - Add `README.ru.md` as the Russian quick-onboarding translation.
 - Update governance documentation to describe the README language policy and GitHub Release Notes expectations.
-- No runtime behavior changed.
+- Add optional Kerio Connect API log export mode using `.env` settings.
+- Add `.env.example` with documented Kerio API connection settings.
 
 ## v0.1.2 - 2026-04-05
 
